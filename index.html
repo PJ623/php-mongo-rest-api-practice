@@ -1,0 +1,117 @@
+<html>
+
+<head>
+    <title>Testing</title>
+</head>
+
+<body>
+    <h1>API</h1>
+    <p>Sorry for the mess!</p>
+    <ul>
+        <li>
+            URI needs to be beautified
+        </li>
+    </ul>
+    <input id="first-name" type="text" placeholder="first name">
+    <input id="last-name" type="text" placeholder="last name">
+    <button id="get">get</button>
+    <button id="post">post</button>
+    <button id="delete">delete</button>
+
+    <br>
+    <input id="new-first-name" type="text" placeholder="new first name">
+    <input id="new-last-name" type="text" placeholder="new last name">
+    <button id="put">put</button>
+
+    <p id="results">
+
+    </p>
+    <script>
+        function showResults(str) {
+            document.getElementById("results").innerText = str;
+        }
+
+        function getFirstName() {
+            return document.getElementById("first-name").value;
+        }
+        function getLastName() {
+            return document.getElementById("last-name").value;
+        }
+
+        function getPerson() {
+            var data = {
+                "first_name": getFirstName(),
+                "last_name": getLastName()
+            };
+            fetch("./api/people/people.php" + "?" + "first_name=" + data.first_name + "&" + "last_name=" + data.last_name, {
+                method: 'GET', // or 'PUT'
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+                // jsonify response
+            }).then(
+                res => res.json()
+            ).then(
+                //response => showResults((response))
+                response => showResults(JSON.stringify(response[0]))
+                );
+        }
+
+        function postPerson() {
+            var data = {
+                "first_name": getFirstName(),
+                "last_name": getLastName()
+            };
+            fetch("./api/people/people.php", {
+                method: 'POST', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                () => showResults(getFirstName() + " " + getLastName() + " " + "successfully posted.")
+            );
+        }
+
+        function deletePerson() {
+            var data = {
+                "first_name": getFirstName(),
+                "last_name": getLastName()
+            };
+            fetch("./api/people/people.php", {
+                method: 'DELETE', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                () => showResults(getFirstName() + " " + getLastName() + " " + "successfully deleted.")
+            );
+        }
+
+        function putPerson() {
+            var data = {
+                "first_name": getFirstName(),
+                "last_name": getLastName(),
+                "new_first_name": document.getElementById("new-first-name").value,
+                "new_last_name": document.getElementById("new-last-name").value
+            };
+            fetch("./api/people/people.php", {
+                method: 'PUT', // or 'PUT'
+                body: JSON.stringify(data), // data can be `string` or {object}!
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            }).then(
+                () => showResults(data.new_first_name + " " + data.new_last_name + " " + "successfully put.")
+            );
+        }
+
+        document.getElementById("get").addEventListener("click", getPerson);
+        document.getElementById("post").addEventListener("click", postPerson);
+        document.getElementById("delete").addEventListener("click", deletePerson);
+        document.getElementById("put").addEventListener("click", putPerson);
+    </script>
+</body>
+
+</html>
